@@ -32,6 +32,7 @@ y_dk = 2
 #tonneaux
 tonneaux = []
 direction = [-2, 2]
+directiondk = 1
 chute_t = False
 #bananaaaas
 bananes = []
@@ -89,17 +90,22 @@ def chute():
         mario_y += 2
 
 def monter(x):
-    global sur_echelle, mario_y
+    global sur_echelle, mario_y, costume
     for echelle in echelles:
         if echelle[0]<=mario_x+12 and echelle[1]<=mario_y+14 and echelle[0]+10>=mario_x and echelle[1]+26>=mario_y:
             if pyxel.btn(pyxel.KEY_UP):
                 sur_echelle = True
+                costume = 3
                 mario_y-= 1
             if pyxel.btn(pyxel.KEY_DOWN) and pyxel.pget(mario_x, mario_y+14) != pyxel.pget(0,242):
                 mario_y+= 1
+            if pyxel.btn(pyxel.KEY_DOWN) and pyxel.pget(mario_x, mario_y+14) == pyxel.pget(0,242):
+                sur_echelle = False
+                costume = 0
     if sur_echelle and not (echelle[0]<=mario_x+12 and echelle[1]<=mario_y+14 and echelle[0]+10>=mario_x and echelle[1]+26>=mario_y):
         mario_y -= 2*CASE-2
         sur_echelle = False
+        costume = 0
 
 #Tonneaux
 def creation_tonneaux():
@@ -225,6 +231,19 @@ def changement_bananes():
 def changement_tonneaux():
     global costume_tonneau
     costume_tonneau = (costume_tonneau + 1) % 4
+
+def mouvement_dk(x):
+    global directiondk
+    if x == 220 :
+        directiondk = -1
+    elif x == 60:
+        directiondk = 1
+    return x + directiondk
+
+def collision_dk():
+    global vies
+    if x_dk<=mario_x+12 and y_dk<=mario_y+14 and x_dk+19>=mario_x and y_dk+20>=mario_y:
+        vies = 0
         
 def draw():
     if vies > 0 and not gagne:
@@ -246,7 +265,7 @@ def draw():
         elif costume == 1:
             pyxel.blt(mario_x, mario_y, 0, 51, 31, 12, 14, 2)
         elif costume == 3:
-            pyxel.blt(mario_x, mario_y, 0, 51, 31, 12, 14, 2)
+            pyxel.blt(mario_x, mario_y, 0, 62, 31, 11, 13, 2)
         
         #creation echelles
         for i in echelles:
@@ -300,7 +319,11 @@ def draw():
     
     elif gagne == True :
         pyxel.cls(6)
-            #afficher mario et peach en gros qui s'en vont
+        pyxel.blt(x_dk, y_dk, 0, 19, 20, 28, -24, 13)
+        
+    elif gagne == "Oui":
+        pyxel.cls(6)
+        pyxel.text(100, 100, "You won !", 10)
         
     else:
         pyxel.cls(0)
@@ -308,7 +331,7 @@ def draw():
         #afficher mario qui tombe et donkey kong qui part avec peach
         
 def update():
-    global mario_x, mario_y, tonneaux, echelles, bananes
+    global mario_x, mario_y, tonneaux, echelles, bananes, x_dk, y_dk, gagne
     if not sur_echelle:
         if pyxel.frame_count % FRAME_REFRESH == 0:
             chute()
@@ -346,6 +369,14 @@ def update():
     super_bananas = suppression_super_banane()
     for i in super_bananas:
             i[0]+= i[2]
+    
+    x_dk = mouvement_dk(x_dk)
+    collision_dk()
+    if gagne:
+        for i in range(200):
+            y_dk += 2
+        gagne = "Oui"
+
     
     if pyxel.btn(pyxel.KEY_ESCAPE):
         quit()
