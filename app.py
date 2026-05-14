@@ -43,6 +43,7 @@ boom = []
 #costumes
 costume = 0
 costume_banane = 0
+costume_tonneau = 0
 
 pyxel.init(WIDTH, HEIGHT, title= TITLE)
 pyxel.load("res.pyxres")
@@ -135,7 +136,7 @@ def collision_tonneaux():
             suppression_tonneau(tonneau)
             vies -= 1
             explosions_creation(tonneau[0], tonneau[1])
-        if  pyxel.pget(tonneau[0]+9, tonneau[1]+4)==15 or pyxel.pget(tonneau[0]-5, tonneau[1]+4)==15:
+        if pyxel.pget(tonneau[0]+9, tonneau[1]+4)==15 or pyxel.pget(tonneau[0]-5, tonneau[1]+4)==15:
             explosions_creation(tonneau[0], tonneau[1])
             suppression_tonneau(tonneau)
     
@@ -145,7 +146,7 @@ def suppression_tonneau(i):
 
 #bananaaaas    
 def creation_bananes():
-    if pyxel.frame_count % randint(350, 500)==0:
+    if pyxel.frame_count % randint(350, 500)==5:
         bananes.append([38*2, 5*2, choice(direction)])
     return bananes
     
@@ -220,7 +221,10 @@ def changement_costume():
 def changement_bananes():
     global costume_banane
     costume_banane = (costume_banane + 1) % 8
-    
+
+def changement_tonneaux():
+    global costume_tonneau
+    costume_tonneau = (costume_tonneau + 1) % 4
         
 def draw():
     if vies > 0 and not gagne:
@@ -251,8 +255,11 @@ def draw():
             
         #tonneaux
         for i in tonneaux:
-            pyxel.circ(i[0], i[1], 4, 15)
-        
+            if costume_tonneau == 0 or costume_tonneau == 1:
+                pyxel.blt(i[0], i[1], 0, 0, 48, 8, 8, 2)
+            elif costume_tonneau == 2 or costume_tonneau == 3:
+                pyxel.blt(i[0], i[1], 0, 8, 48, 8, 8, 2)
+
         #banananaas
         for i in bananes:
             if costume_banane== 0 or costume_banane== 1:
@@ -320,6 +327,7 @@ def update():
             i[0]+= i[2]
         
     changement_bananes()
+    changement_tonneaux()
     collision_tonneaux()
     arrivee_tonneaux()
     collision_super_banane()
