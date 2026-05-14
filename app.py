@@ -118,14 +118,14 @@ def mouvement_tonneaux():
 def chute_tonneaux():
     global tonneaux, chute_t
     for i in tonneaux:
-        while pyxel.pget(i[0], i[1]+6) != pyxel.pget(0,242):
+        while pyxel.pget(i[0], i[1]+8) != pyxel.pget(0,242):
             chute_t = True
             i[1] += 2
         chute_t = False
     
 def arrivee_tonneaux():
     for tonneau in tonneaux:
-        if tonneau[1]== 236:
+        if tonneau[1]== 234:
             explosions_creation (tonneau[0], tonneau[1])
             suppression_tonneau(tonneau)
     
@@ -146,7 +146,7 @@ def suppression_tonneau(i):
 
 #bananaaaas    
 def creation_bananes():
-    if pyxel.frame_count % randint(350, 500)==5:
+    if pyxel.frame_count % randint(350, 500)==50:
         bananes.append([38*2, 5*2, choice(direction)])
     return bananes
     
@@ -265,11 +265,17 @@ def draw():
             if costume_banane== 0 or costume_banane== 1:
                 pyxel.blt(i[0], i[1], 0, 32, 0, 8, 8, 2)
             if costume_banane== 2 or costume_banane== 3:
-                pyxel.blt(i[0], i[1], 0, 40, 0, 8, 8, 2)
+                if i[2]==2:
+                    pyxel.blt(i[0], i[1], 0, 40, 0, 8, 8, 2)
+                else:
+                    pyxel.blt(i[0], i[1], 0, 40, 8, 8, 8, 2)
             if costume_banane== 4 or costume_banane== 5:
                 pyxel.blt(i[0], i[1], 0, 32, 8, 8, 8, 2)
             if costume_banane== 6 or costume_banane== 7:
-                pyxel.blt(i[0], i[1], 0, 40, 8, 8, 8, 2)
+                if i[2]== -2:
+                    pyxel.blt(i[0], i[1], 0, 40, 0, 8, 8, 2)
+                else:
+                    pyxel.blt(i[0], i[1], 0, 40, 8, 8, 8, 2)
             
         for i in super_bananas:
             pyxel.blt(i[0], i[1], 0, 32, 0, 8, 8, 2)
