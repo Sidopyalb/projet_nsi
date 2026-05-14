@@ -125,6 +125,7 @@ def chute_tonneaux():
 def arrivee_tonneaux():
     for tonneau in tonneaux:
         if tonneau[1]== 236:
+            explosions_creation (tonneau[0], tonneau[1])
             suppression_tonneau(tonneau)
     
 def collision_tonneaux():
@@ -134,6 +135,9 @@ def collision_tonneaux():
             suppression_tonneau(tonneau)
             vies -= 1
             explosions_creation(tonneau[0], tonneau[1])
+        if  pyxel.pget(tonneau[0]+9, tonneau[1]+4)==15 or pyxel.pget(tonneau[0]-5, tonneau[1]+4)==15:
+            explosions_creation(tonneau[0], tonneau[1])
+            suppression_tonneau(tonneau)
     
 def suppression_tonneau(i):
     global tonneaux
@@ -189,12 +193,10 @@ def explosions_animation():
 def stars():
     global star
     if star>0 and pyxel.btnp(pyxel.KEY_SPACE) and mario_y< 12:
-        print(mario_y)
         super_bananas.append([mario_x-10, mario_y+8, -2])
         star -= 1
     elif star>0 and pyxel.btnp(pyxel.KEY_SPACE) and not mario_y== 12:
         echelles.append((mario_x, mario_y-11, CASE-2, ESPACE-10, 6))
-        print(mario_y)
         star -= 1
         
 def collision_super_banane():
@@ -204,6 +206,7 @@ def collision_super_banane():
             gagne = True
 
 def suppression_super_banane():
+    global super_bananas
     for i in super_bananas:
         if i[0]== 2:
             super_bananas.remove(i)
@@ -216,8 +219,7 @@ def changement_costume():
         
 def changement_bananes():
     global costume_banane
-    costume_banane = (costume + 1) % 4
-    print(costume_banane)
+    costume_banane = (costume_banane + 1) % 8
     
         
 def draw():
@@ -253,13 +255,13 @@ def draw():
         
         #banananaas
         for i in bananes:
-            if costume_banane== 0:
+            if costume_banane== 0 or costume_banane== 1:
                 pyxel.blt(i[0], i[1], 0, 32, 0, 8, 8, 2)
-            if costume_banane== 1:
+            if costume_banane== 2 or costume_banane== 3:
                 pyxel.blt(i[0], i[1], 0, 40, 0, 8, 8, 2)
-            if costume_banane== 2:
+            if costume_banane== 4 or costume_banane== 5:
                 pyxel.blt(i[0], i[1], 0, 32, 8, 8, 8, 2)
-            if costume_banane== 3:
+            if costume_banane== 6 or costume_banane== 7:
                 pyxel.blt(i[0], i[1], 0, 40, 8, 8, 8, 2)
             
         for i in super_bananas:
@@ -293,7 +295,7 @@ def draw():
         #afficher mario qui tombe et donkey kong qui part avec peach
         
 def update():
-    global mario_x, mario_y, tonneaux, echelles
+    global mario_x, mario_y, tonneaux, echelles, bananes
     if not sur_echelle:
         if pyxel.frame_count % FRAME_REFRESH == 0:
             chute()
@@ -337,5 +339,4 @@ def update():
 
 trous = creation_trous_etages()
 echelles = creation_echelles()
-print(mario_y)
 pyxel.run(update, draw)
